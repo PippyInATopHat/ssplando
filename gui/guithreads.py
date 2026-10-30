@@ -40,7 +40,11 @@ class RandomizerThread(QThread):
         return progress_cb
 
     def run(self):
-        dry_run = False if isinstance(self.randomizer, PlandoRandomizer) else self.randomizer.options["dry-run"]
+        dry_run = (
+            False
+            if isinstance(self.randomizer, PlandoRandomizer)
+            else self.randomizer.options["dry-run"]
+        )
         default_ui_progress_callback = self.create_ui_progress_callback(0)
         if not dry_run:
             try:

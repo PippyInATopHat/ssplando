@@ -328,7 +328,9 @@ class RandoGUI(QMainWindow):
         getattr(self.ui, "option_json_spoiler").setVisible(False)
 
         self.ui.ouput_folder_browse_button.clicked.connect(self.browse_for_output_dir)
-        self.ui.placement_file_browse_button.clicked.connect(self.browse_for_placement_file)
+        self.ui.placement_file_browse_button.clicked.connect(
+            self.browse_for_placement_file
+        )
         self.ui.randomize_button.clicked.connect(self.randomize)
         self.ui.permalink.textChanged.connect(self.permalink_updated)
         self.ui.seed.textChanged.connect(self.update_settings)

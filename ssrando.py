@@ -56,6 +56,37 @@ class BaseRandomizer:
         self.log_file_path = self.exe_root_path / "logs"
         self.log_file_path.mkdir(exist_ok=True, parents=True)
 
+    def set_progress_callback(self, progress_callback: Callable[[str], None]):
+            self.progress_callback = progress_callback
+    
+    def check_valid_directory_setup(self):
+            # catch common errors with directory setup
+            if not self.actual_extract_path.is_dir():
+                raise StartupException(
+                    "ERROR: directory actual-extract doesn't exist! Make sure you have the ISO extracted into that directory."
+                )
+            if not self.modified_extract_path.is_dir():
+                raise StartupException(
+                    "ERROR: directory modified-extract doesn't exist! Make sure you have the contents of actual-extract copied over to modified-extract."
+                )
+            if not (self.actual_extract_path / "DATA").is_dir():
+                raise StartupException(
+                    "ERROR: directory actual-extract doesn't contain a DATA directory! Make sure you have the ISO properly extracted into actual-extract."
+                )
+            if not (self.modified_extract_path / "DATA").is_dir():
+                raise StartupException(
+                    "ERROR: directory 'DATA' in modified-extract doesn't exist! Make sure you have the contents of actual-extract copied over to modified-extract."
+                )
+            if not (
+                self.modified_extract_path
+                / "DATA"
+                / "files"
+                / "COPYDATE_CODE_2011-09-28_153155"
+            ).exists():
+                raise StartupException(
+                    "ERROR: the randomizer only supports NTSC-U 1.00 (North American)."
+                )
+    
     def randomize(self):
         """patch the game, or only write the spoiler log, depends on the implementation"""
         raise NotImplementedError("abstract")
@@ -108,34 +139,6 @@ class Randomizer(BaseRandomizer):
         self.dry_run = bool(self.options["dry-run"])
         self.randomizer_hash = calculate_rando_hash(self.seed, self.options)
 
-    def check_valid_directory_setup(self):
-        # catch common errors with directory setup
-        if not self.actual_extract_path.is_dir():
-            raise StartupException(
-                "ERROR: directory actual-extract doesn't exist! Make sure you have the ISO extracted into that directory."
-            )
-        if not self.modified_extract_path.is_dir():
-            raise StartupException(
-                "ERROR: directory modified-extract doesn't exist! Make sure you have the contents of actual-extract copied over to modified-extract."
-            )
-        if not (self.actual_extract_path / "DATA").is_dir():
-            raise StartupException(
-                "ERROR: directory actual-extract doesn't contain a DATA directory! Make sure you have the ISO properly extracted into actual-extract."
-            )
-        if not (self.modified_extract_path / "DATA").is_dir():
-            raise StartupException(
-                "ERROR: directory 'DATA' in modified-extract doesn't exist! Make sure you have the contents of actual-extract copied over to modified-extract."
-            )
-        if not (
-            self.modified_extract_path
-            / "DATA"
-            / "files"
-            / "COPYDATE_CODE_2011-09-28_153155"
-        ).exists():
-            raise StartupException(
-                "ERROR: the randomizer only supports NTSC-U 1.00 (North American)."
-            )
-
     @cached_property
     def get_total_progress_steps(self):
         rando_steps = self.rando.get_total_progress_steps() + 3
@@ -143,9 +146,6 @@ class Randomizer(BaseRandomizer):
             return rando_steps + 1
         else:
             return rando_steps + 1 + 1 + GAMEPATCH_TOTAL_STEP_COUNT
-
-    def set_progress_callback(self, progress_callback: Callable[[str], None]):
-        self.progress_callback = progress_callback
 
     def randomize(self):
         # make sure the output path is valid if we're writing the patched game

@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'randogui.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.8.0
+## Created by: Qt User Interface Compiler version 6.10.1
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -81,30 +81,30 @@ class Ui_MainWindow(object):
 
         self.vlay_files.addLayout(self.hlay_output)
 
-        self.vlay_plando = QVBoxLayout()
-        self.vlay_plando.setObjectName(u"vlay_plando")
-        self.hlay_plando_file = QHBoxLayout()
-        self.hlay_plando_file.setObjectName(u"hlay_plando_file")
-        self.option_plando = QCheckBox(self.tab_setup)
-        self.option_plando.setObjectName(u"option_plando")
+        self.vlay_placement = QVBoxLayout()
+        self.vlay_placement.setObjectName(u"vlay_placement")
+        self.hlay_placement_file = QHBoxLayout()
+        self.hlay_placement_file.setObjectName(u"hlay_placement_file")
+        self.option_placement = QCheckBox(self.tab_setup)
+        self.option_placement.setObjectName(u"option_placement")
 
-        self.hlay_plando_file.addWidget(self.option_plando)
+        self.hlay_placement_file.addWidget(self.option_placement)
 
-        self.plando_file = QLineEdit(self.tab_setup)
-        self.plando_file.setObjectName(u"plando_file")
+        self.placement_file = QLineEdit(self.tab_setup)
+        self.placement_file.setObjectName(u"placement_file")
 
-        self.hlay_plando_file.addWidget(self.plando_file)
+        self.hlay_placement_file.addWidget(self.placement_file)
 
-        self.plando_file_browse = QPushButton(self.tab_setup)
-        self.plando_file_browse.setObjectName(u"plando_file_browse")
+        self.placement_file_browse_button = QPushButton(self.tab_setup)
+        self.placement_file_browse_button.setObjectName(u"placement_file_browse_button")
 
-        self.hlay_plando_file.addWidget(self.plando_file_browse)
-
-
-        self.vlay_plando.addLayout(self.hlay_plando_file)
+        self.hlay_placement_file.addWidget(self.placement_file_browse_button)
 
 
-        self.vlay_files.addLayout(self.vlay_plando)
+        self.vlay_placement.addLayout(self.hlay_placement_file)
+
+
+        self.vlay_files.addLayout(self.vlay_placement)
 
 
         self.verticalLayout_27.addLayout(self.vlay_files)
@@ -1996,8 +1996,8 @@ class Ui_MainWindow(object):
 #endif // QT_CONFIG(tooltip)
         self.label_output.setText(QCoreApplication.translate("MainWindow", u"Output Folder", None))
         self.ouput_folder_browse_button.setText(QCoreApplication.translate("MainWindow", u"Browse", None))
-        self.option_plando.setText(QCoreApplication.translate("MainWindow", u"Enable Plandomizer", None))
-        self.plando_file_browse.setText(QCoreApplication.translate("MainWindow", u"Browse", None))
+        self.option_placement.setText(QCoreApplication.translate("MainWindow", u"Enable Plandomizer", None))
+        self.placement_file_browse_button.setText(QCoreApplication.translate("MainWindow", u"Browse", None))
         self.box_additional_files.setTitle(QCoreApplication.translate("MainWindow", u"Additional File Generation", None))
         self.option_no_spoiler_log.setText(QCoreApplication.translate("MainWindow", u"No Spoiler Log", None))
         self.option_json_spoiler.setText(QCoreApplication.translate("MainWindow", u"Generate JSON Spoiler Log", None))

@@ -100,21 +100,21 @@
            </layout>
           </item>
           <item>
-           <layout class="QVBoxLayout" name="vlay_plando">
+           <layout class="QVBoxLayout" name="vlay_placement">
             <item>
-             <layout class="QHBoxLayout" name="hlay_plando_file">
+             <layout class="QHBoxLayout" name="hlay_placement_file">
               <item>
-               <widget class="QCheckBox" name="option_plando">
+               <widget class="QCheckBox" name="option_placement">
                 <property name="text">
                  <string>Enable Plandomizer</string>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="plando_file"/>
+               <widget class="QLineEdit" name="placement_file"/>
               </item>
               <item>
-               <widget class="QPushButton" name="plando_file_browse">
+               <widget class="QPushButton" name="placement_file_browse_button">
                 <property name="text">
                  <string>Browse</string>
                 </property>

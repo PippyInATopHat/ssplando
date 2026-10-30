@@ -38,10 +38,11 @@ from gui.dialogs.custom_theme.custom_theme_dialog import CustomThemeDialog
 from logic.constants import LOCATION_FILTER_TYPES
 
 from logic.logic_input import Areas
+from logic.placement_file import PlacementFile
 from options import OPTIONS, Options
 from gui.dialogs.progressbar.progressdialog import ProgressDialog
 from gui.guithreads import RandomizerThread, ExtractSetupThread
-from ssrando import Randomizer, VERSION
+from ssrando import PlandoRandomizer, Randomizer, VERSION
 from paths import RANDO_ROOT_PATH
 from gui.ui_randogui import Ui_MainWindow
 from yaml_files import checks
@@ -321,12 +322,13 @@ class RandoGUI(QMainWindow):
         getattr(self.ui, "option_got_dungeon_requirement").setVisible(False)
 
         # hide supporting elements
-        getattr(self.ui, "option_plando").setVisible(False)
-        getattr(self.ui, "plando_file").setVisible(False)
-        getattr(self.ui, "plando_file_browse").setVisible(False)
+        getattr(self.ui, "option_placement").setVisible(True)
+        getattr(self.ui, "placement_file").setVisible(True)
+        getattr(self.ui, "placement_file_browse_button").setVisible(True)
         getattr(self.ui, "option_json_spoiler").setVisible(False)
 
         self.ui.ouput_folder_browse_button.clicked.connect(self.browse_for_output_dir)
+        self.ui.placement_file_browse_button.clicked.connect(self.browse_for_placement_file)
         self.ui.randomize_button.clicked.connect(self.randomize)
         self.ui.permalink.textChanged.connect(self.permalink_updated)
         self.ui.seed.textChanged.connect(self.update_settings)
@@ -373,8 +375,18 @@ class RandoGUI(QMainWindow):
             self.randomize_after_iso_extract = True
             self.ask_for_clean_iso()
             return
+        progress_dialog_title = "Randomizing - Hash:"
         # make sure user can't mess with the options now
-        self.rando = Randomizer(self.areas, self.options.copy())
+        if self.ui.option_placement.isChecked():
+            plcmt_file = PlacementFile()
+            progress_dialog_title = "Plandomizing from placement file"
+            with open(self.options["placement-file"]) as f:
+                plcmt_file.read_from_file(f)
+                plcmt_file.check_valid(self.areas)
+                self.rando = PlandoRandomizer(plcmt_file, self.areas)
+        else:
+            self.rando = Randomizer(self.areas, self.options.copy())
+            progress_dialog_title = f"Randomizing - Hash: {self.rando.randomizer_hash}"
 
         if dry_run:
             extra_steps = 1  # done
@@ -382,7 +394,7 @@ class RandoGUI(QMainWindow):
             extra_steps = 101  # create iso + done
 
         self.progress_dialog = ProgressDialog(
-            f"Randomizing - Hash: {self.rando.randomizer_hash}",
+            progress_dialog_title,
             "Initializing...",
             self.rando.get_total_progress_steps + extra_steps,
             self.cancel_callback,
@@ -429,7 +441,9 @@ class RandoGUI(QMainWindow):
         if not self.options["dry-run"]:
             iso_text = ", the randomized ISO has been placed in the output folder"
 
-        if self.options["no-spoiler-log"]:
+        if self.ui.option_placement.isChecked():
+            text = f"""Randomization complete{iso_text}.<br>Plandomized from {self.options["placement-file"]}"""
+        elif self.options["no-spoiler-log"]:
             text = f"""Randomization complete{iso_text}.<br>RANDO HASH: {self.rando.randomizer_hash}"""
         else:
             text = f"""Randomization complete{iso_text}.<br>RANDO HASH: {self.rando.randomizer_hash}<br>
@@ -488,6 +502,22 @@ class RandoGUI(QMainWindow):
         if not output_folder:
             return
         self.ui.output_folder.setText(output_folder)
+        self.update_settings()
+
+    def browse_for_placement_file(self):
+        if self.options["placement-file"] and os.path.isfile(
+            self.options["placement-file"]
+        ):
+            default_dir = os.path.dirname(self.options["placement-file"])
+        else:
+            default_dir = None
+
+        (placement_file, _filter) = QFileDialog.getOpenFileName(
+            self, "Select Plandomizer file", default_dir, "JSON files (*.json)"
+        )
+        if not placement_file:
+            return
+        self.ui.placement_file.setText(placement_file)
         self.update_settings()
 
     def update_ui_for_settings(self):
@@ -553,6 +583,10 @@ class RandoGUI(QMainWindow):
 
     def update_settings(self):
         self.options.set_option("output-folder", self.ui.output_folder.text())
+        if self.ui.option_placement.isChecked():
+            self.options.set_option("placement-file", self.ui.placement_file.text())
+        else:
+            self.options.set_option("placement-file", "")
         try:
             self.options.set_option("seed", int(self.ui.seed.text()))
         except ValueError:

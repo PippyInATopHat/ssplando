@@ -1,8 +1,10 @@
 from collections import OrderedDict
+from pathlib import Path
 import sys
 import argparse
 import yaml
 import json
+from extractmanager import ExtractManager
 from logic.dump import dump_constants
 from logic.logic_input import Areas
 from yaml_files import requirements, checks, hints, map_exits
@@ -32,10 +34,10 @@ def main():
         "--permalink",
         help="Specify a permalink, which includes the settings. This is set first, other options may override these settings",
     )
-    parser.add_argument(
-        "--placement-file",
-        help="Specify the location of a placement file json that is used directly as a plandomizer, overrides all other options",
-    )
+    # parser.add_argument(
+    #     "--placement-file",
+    #     help="Specify the location of a placement file json that is used directly as a plandomizer, overrides all other options",
+    # )
     parser.add_argument(
         "--dump-graph",
         help="Dumps the graph used for logic and exits",
@@ -158,6 +160,9 @@ def main():
 
         plandomizer.progress_callback = progress_callback
         plandomizer.randomize()
+        extract_manager = ExtractManager(Path(".").resolve())
+        extract_manager.repack_game(options["output-folder"])
+        print("done!")
         exit(0)
 
     assert options is not None

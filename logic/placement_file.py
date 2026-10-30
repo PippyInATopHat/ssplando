@@ -15,9 +15,12 @@ class PlacementFile:
         self.options = Options()
         self.hash_str = ""
         self.starting_items = []
+        self.start_entrance = None
         self.required_dungeons = []
         self.item_locations = {}
         self.chest_dowsing = {}
+        self.puzzles = None  # unsure of best way to do this idiomatically?
+        self.start_statues = None
         self.hints = {}
         self.dungeon_connections = {}
         self.trial_connections = {}
@@ -37,9 +40,12 @@ class PlacementFile:
             "permalink": self.options.get_permalink(exclude_seed=True),
             "hash": self.hash_str,
             "starting-items": self.starting_items,
+            "start-entrance": self.start_entrance,
             "required-dungeons": self.required_dungeons,
             "item-locations": self.item_locations,
             "chest-dowsing": self.chest_dowsing,
+            "puzzles": self.puzzles,
+            "start-statues": self.start_statues,
             "hints": self.hints,
             "entrance-connections": self.dungeon_connections,
             "trial-connections": self.trial_connections,
@@ -55,8 +61,11 @@ class PlacementFile:
         self.options.set_option("seed", -1)
         self.hash_str = jsn["hash"]
         self.starting_items = jsn["starting-items"]
+        self.start_entrance = jsn["start-entrance"]
         self.required_dungeons = jsn["required-dungeons"]
         self.item_locations = jsn["item-locations"]
+        self.puzzles = jsn["puzzles"]
+        self.start_statues = jsn["start-statues"]
         self.chest_dowsing = jsn["chest-dowsing"]
         self.hints = jsn["hints"]
         self.dungeon_connections = jsn["entrance-connections"]

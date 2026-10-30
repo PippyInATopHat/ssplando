@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import Deque, Dict, Generic, List, Set, Any, Tuple, TypeVar
 from functools import cache
-from enum import Enum
+from enum import Enum, IntEnum
 from dataclasses import dataclass, field
 
 from .logic_expression import DNFInventory, LogicExpression, EventAtom
@@ -11,7 +11,9 @@ from .constants import *
 import yaml
 
 
-AllowedTimeOfDay = Enum("AllowedTimeOfDay", ("DayOnly", "NightOnly", "Both"))
+AllowedTimeOfDay = IntEnum(
+    "AllowedTimeOfDay", [("DayOnly", 1), ("NightOnly", 2), ("Both", 3)]
+)
 DayOnly = AllowedTimeOfDay.DayOnly
 NightOnly = AllowedTimeOfDay.NightOnly
 Both = AllowedTimeOfDay.Both
